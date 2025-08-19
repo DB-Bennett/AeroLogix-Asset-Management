@@ -1,2 +1,3 @@
-# AeroLogix-Asset-Management
-A relational database schema/ a series of SQL queries to manage and report on the lifecycle of high-value IT/logistics assets, such as servers, drones, and specialized diagnostic equipment, provided by a fictitious government to AeroLogix Solutions for a specific contract. All assets are accounted for/in compliance with government regulations.
+# Aero-Logix Project: Asset Management System
+
+This project demonstrates foundational skills in logistics, data management, and problem-solving. I developed a simple SQL database schema for an asset management system, simulating a real-world scenario for a government contractor. The project includes a complete database schema, sample data, and analytical queries to solve a simulated inventory reconciliation problem. It's a hands-on example of my ability to work with data, ensure compliance, and document my process for a professional portfolio.
