@@ -1,0 +1,87 @@
+-- This SQL schema is for the Aero-Logix asset management database.
+-- It tracks assets, their locations, and a log of maintenance activities.
+
+-- Create the Locations table to store information about where assets are held.
+CREATE TABLE Locations (
+    LocationID INT PRIMARY KEY,
+    LocationName VARCHAR(255) NOT NULL,
+    Address VARCHAR(255),
+    City VARCHAR(255),
+    State VARCHAR(255),
+    ZipCode VARCHAR(10)
+);
+
+-- Create the Assets table to store all information about each piece of equipment.
+-- It links to the Locations table using a foreign key.
+CREATE TABLE Assets (
+    AssetID INT PRIMARY KEY,
+    AssetTag VARCHAR(50) UNIQUE NOT NULL,
+    ItemDescription VARCHAR(255) NOT NULL,
+    SerialNumber VARCHAR(50) UNIQUE NOT NULL,
+    Condition VARCHAR(50),
+    AcquisitionDate DATE,
+    LocationID INT,
+    FOREIGN KEY (LocationID) REFERENCES Locations(LocationID)
+);
+
+-- Create the MaintenanceLogs table to track all maintenance activities for assets.
+-- It links to the Assets table using a foreign key.
+CREATE TABLE MaintenanceLogs (
+    LogID INT PRIMARY KEY,
+    AssetID INT,
+    MaintenanceDate DATE NOT NULL,
+    MaintenanceType VARCHAR(100),
+    Details TEXT,
+    Cost DECIMAL(10, 2),
+    FOREIGN KEY (AssetID) REFERENCES Assets(AssetID)
+);
+
+-- Example INSERT statements to populate the tables with data.
+
+-- Add data to the Locations table
+INSERT INTO Locations (LocationID, LocationName, Address, City, State, ZipCode) VALUES
+(101, 'Warehouse A', '456 Tech Drive', 'Austin', 'TX', '78701'),
+(102, 'Warehouse B', '789 Industrial Blvd', 'Dallas', 'TX', '75201'),
+(103, 'Warehouse C', '101 Server St', 'Houston', 'TX', '77001'),
+(104, 'Warehouse D', '505 Logistics Ave', 'San Antonio', 'TX', '78201');
+
+-- Add data to the Assets table
+INSERT INTO Assets (AssetID, AssetTag, ItemDescription, SerialNumber, Condition, AcquisitionDate, LocationID) VALUES
+(1, 'PEGASUS-001', 'Server Rack', 'SVR-PEG-00123', 'Used', '2025-06-15', 101),
+(2, 'PEGASUS-002', 'Fiber Optic Cable Spool', 'FOC-PEG-00456', 'New', '2025-06-15', 101),
+(3, 'PEGASUS-003', 'Network Switch', 'NWS-PEG-00789', 'Damaged', '2025-06-15', 102),
+(4, 'PEGASUS-004', 'Encryption Device', 'ENC-PEG-01011', 'Used', '2025-06-15', 103),
+(5, 'PEGASUS-005', 'Server Unit', 'SRV-PEG-01213', 'New', '2025-06-15', 102),
+(6, 'PEGASUS-006', 'Router Device', 'RAD-PEG-00667', 'New', '2025-07-20', 103),
+(7, 'PEGASUS-007', 'Desktop PC', 'PC-PEG-00777', 'Used', '2025-07-25', 104),
+(8, 'PEGASUS-008', 'Barcode Scanner', 'SCAN-PEG-00888', 'New', '2025-07-25', 104),
+(9, 'PEGASUS-009', 'Hard Drive Array', 'HDA-PEG-00999', 'Used', '2025-08-01', 101);
+
+-- Add data to the MaintenanceLogs table
+INSERT INTO MaintenanceLogs (LogID, AssetID, MaintenanceDate, MaintenanceType, Details, Cost) VALUES
+(1, 1, '2025-07-25', 'General Inspection', 'Checked all connections and integrity.', 0.00),
+(2, 3, '2025-07-28', 'Repair', 'Replaced damaged port due to user error.', 150.00),
+(3, 7, '2025-08-05', 'Preventive Maintenance', 'Ran diagnostics and updated software.', 50.00),
+(4, 9, '2025-08-08', 'Repair', 'Replaced a failed drive.', 350.00);
+
+-- Example SQL Queries for analysis.
+
+-- What is the total count of assets in "Warehouse A"?
+SELECT COUNT(*) FROM Assets
+WHERE LocationID = 101;
+
+-- Find all assets whose condition is listed as "Used" or "Damaged".
+SELECT * FROM Assets
+WHERE Condition = 'Used' OR Condition = 'Damaged';
+
+-- Find all assets and their corresponding locations.
+SELECT A.AssetTag, A.ItemDescription, L.LocationName
+FROM Assets AS A
+JOIN Locations AS L
+ON A.LocationID = L.LocationID;
+
+-- Find all assets with an associated maintenance log and their maintenance costs.
+SELECT A.AssetTag, A.ItemDescription, M.MaintenanceDate, M.Cost
+FROM Assets AS A
+JOIN MaintenanceLogs AS M
+ON A.AssetID = M.AssetID;
